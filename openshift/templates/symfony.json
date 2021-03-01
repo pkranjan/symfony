@@ -4,18 +4,18 @@
   "metadata": {
     "name": "symfony",
     "annotations": {
-      "openshift.io/display-name": "Apache HTTP Server",
-      "description": "An example Apache HTTP Server (httpd) application that serves static content. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/httpd-ex/blob/master/README.md.",
+      "openshift.io/display-name": "Symfony on OpenShift",
+      "description": "Run Symphony Application on Openshift.",
       "tags": "quickstart,httpd",
       "iconClass": "icon-apache",
-      "openshift.io/long-description": "This template defines resources needed to develop a static application served by Apache HTTP Server (httpd), including a build configuration and application deployment configuration.",
-      "openshift.io/provider-display-name": "Red Hat, Inc.",
-      "openshift.io/documentation-url": "https://github.com/sclorg/httpd-ex",
+      "openshift.io/long-description": "Run Symphony Application on Openshift.",
+      "openshift.io/provider-display-name": "ABC Company, Inc.",
+      "openshift.io/documentation-url": "https://github.com/pkranjan/symfony",
       "openshift.io/support-url": "https://access.redhat.com",
       "template.openshift.io/bindable": "false"
     }
   },
-  "message": "The following service(s) have been created in your project: ${NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/sclorg/httpd-ex/blob/master/README.md.",
+  "message": "The following service(s) have been created in your project: ${NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/pkranjan/symfony/blob/master/README.md.",
   "labels": {
       "template": "symfony",
       "app": "symfony"
@@ -121,7 +121,10 @@
               "secret": "${GENERIC_WEBHOOK_SECRET}"
             }
           }
-        ]
+        ],
+        "postCommit": {
+          "script": "sh install.sh"
+        }
       }
     },
     {
@@ -234,7 +237,7 @@
       "displayName": "Git Repository URL",
       "description": "The URL of the repository with your application source code.",
       "required": true,
-      "value": "https://github.com/sclorg/httpd-ex.git"
+      "value": "https://github.com/pkranjan/symfony.git"
     },
     {
       "name": "SOURCE_REPOSITORY_REF",
