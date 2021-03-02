@@ -60,7 +60,6 @@ ENV BASH_ENV=${HTTPD_APP_ROOT}/scl_enable \
     PROMPT_COMMAND=". ${HTTPD_APP_ROOT}/scl_enable"
 
 # Reset permissions of filesystem to default values
-RUN /usr/libexec/httpd-prepare && rpm-file-permissions
 
 USER 1001
 
