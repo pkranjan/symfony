@@ -61,6 +61,22 @@ ENV BASH_ENV=${HTTPD_APP_ROOT}/scl_enable \
 
 # Reset permissions of filesystem to default values
 
+RUN yum install -y epel-release yum-utils
+RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm 
+RUN yum-config-manager --enable remi-php70
+
+RUN -y yum install php php-common php-mysql php-intl php-xml httpd* elinks
+
+RUN wget https://get.symfony.com/cli/installer -O - | bash
+RUN mv .symfony/bin/symfony /usr/local/bin/symfony
+
+RUN curl -sS https://getcomposer.org/installer | php
+RUN mv composer.phar /usr/bin/composer
+RUN chmod +x /usr/bin/composer
+
+RUN cd  /var/www/html & chmod a+x /usr/local/bin/symfony & composer create-project symfony/skeleton proj 
+RUN cd  proj & composer require  symfony/console & composer require server --dev & composer require  symfony/console
+
 USER 1001
 
 # Not using VOLUME statement since it's not working in OpenShift Online:
@@ -68,4 +84,5 @@ USER 1001
 # VOLUME ["${HTTPD_DATA_PATH}"]
 # VOLUME ["${HTTPD_LOG_PATH}"]
 
-CMD ["/usr/bin/run-httpd"]
+# CMD ["/usr/bin/run-httpd"]
+CMD ["php", "bin/console", "server:run"]
