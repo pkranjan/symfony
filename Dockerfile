@@ -33,8 +33,8 @@ EXPOSE 8080
 EXPOSE 8443
 
 RUN yum install -y yum-utils && \
-    yum install -y centos-release-scl epel-release && \
-    INSTALL_PKGS="gettext hostname nss_wrapper bind-utils httpd24 httpd24-mod_ssl httpd24-mod_auth_mellon httpd24-mod_security openssl" && \
+    yum install -y centos-release-scl epel-release && yum update \
+    INSTALL_PKGS="wget php php-common php-mysql php-intl php-xml httpd* elinks gettext hostname nss_wrapper bind-utils httpd24 httpd24-mod_ssl httpd24-mod_auth_mellon httpd24-mod_security openssl" && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum -y clean all --enablerepo='*'
@@ -61,12 +61,6 @@ ENV BASH_ENV=${HTTPD_APP_ROOT}/scl_enable \
 
 # Reset permissions of filesystem to default values
 
-RUN yum install -y epel-release yum-utils
-RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-7.rpm 
-RUN yum-config-manager --enable remi-php70
-
-RUN -y yum install php php-common php-mysql php-intl php-xml httpd* elinks
-
 RUN wget https://get.symfony.com/cli/installer -O - | bash
 RUN mv .symfony/bin/symfony /usr/local/bin/symfony
 
@@ -75,9 +69,11 @@ RUN mv composer.phar /usr/bin/composer
 RUN chmod +x /usr/bin/composer
 
 RUN cd  /var/www/html & chmod a+x /usr/local/bin/symfony & composer create-project symfony/skeleton proj 
-RUN cd  proj & composer require  symfony/console & composer require server --dev & composer require  symfony/console
+RUN cd  proj & composer require symfony/web-server-bundle ^4.4.2 & composer require server ^4.4.2 --dev & composer require symfony/console
+RUN chmod -R ug+rwx /opt/app-root/src & chmod -R ug+rwx /var/www
 
 USER 1001
+WORKDIR /var/www/html/proj
 
 # Not using VOLUME statement since it's not working in OpenShift Online:
 # https://github.com/sclorg/httpd-container/issues/30
@@ -85,4 +81,4 @@ USER 1001
 # VOLUME ["${HTTPD_LOG_PATH}"]
 
 # CMD ["/usr/bin/run-httpd"]
-CMD ["php", "bin/console", "server:run"]
+CMD ["php", "bin/console", "server:run", "*:8080"]
